@@ -1,0 +1,2 @@
+Source: https://github.com/tetherto/wdk-docs/tree/main/skills/wdk
+Commit: c03d3c25e6aba0678cb09d792d64e5543b875761

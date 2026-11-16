@@ -1,0 +1,22 @@
+{
+  "name": "@buchki/wallet-core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@morpho-org/wdk-protocol-lending-morpho-evm": "^4.5.1",
+    "@tetherto/wdk": "^1.0.0-beta.23",
+    "@tetherto/wdk-protocol-bridge-usdt0-evm": "^1.0.0-beta.12",
+    "@tetherto/wdk-protocol-fiat-moonpay": "^1.0.0-beta.6",
+    "@tetherto/wdk-protocol-lending-aave-evm": "^1.0.0-beta.8",
+    "@tetherto/wdk-protocol-swap-velora-evm": "^1.0.0-beta.11",
+    "@tetherto/wdk-wallet-btc": "^1.0.0-beta.18",
+    "@tetherto/wdk-wallet-evm": "^1.0.0-beta.26",
+    "@tetherto/wdk-wallet-solana": "^1.0.0-beta.21",
+    "@tetherto/wdk-wallet-spark": "^1.0.0-beta.32",
+    "@transak/wdk-protocol-fiat-transak": "^1.0.2"
+  }
+}

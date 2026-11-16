@@ -1,0 +1,20 @@
+# Local development database. Not for production.
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: buchki
+      POSTGRES_PASSWORD: buchki
+      POSTGRES_DB: buchki
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    command: ["postgres", "-c", "max_connections=50"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U buchki"]
+      interval: 2s
+      retries: 15
+    restart: unless-stopped
+volumes:
+  pgdata:

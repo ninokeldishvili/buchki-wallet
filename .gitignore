@@ -8,3 +8,7 @@ node_modules/
 
 # IDE
 .idea/
+
+# Build output
+dist/
+*.tsbuildinfo

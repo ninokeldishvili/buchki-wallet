@@ -1,0 +1,30 @@
+{
+  "name": "@buchki/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file-if-exists=../../.env --watch src/main.ts",
+    "start": "node --env-file-if-exists=../../.env src/main.ts",
+    "db:generate": "drizzle-kit generate",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@buchki/wallet-core": "*",
+    "@fastify/cookie": "^11.1.5",
+    "@fastify/cors": "^11.4.3",
+    "@fastify/helmet": "^13.2.0",
+    "@fastify/rate-limit": "^11.2.2",
+    "@fastify/type-provider-typebox": "^6.3.0",
+    "@tetherto/wdk-indexer-http": "^1.0.3",
+    "drizzle-orm": "^0.45.4",
+    "ethers": "6.17.0",
+    "fastify": "^5.12.8",
+    "postgres": "^4.1.1",
+    "typebox": "^1.4.7"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.11",
+    "vitest": "^5.1.0"
+  }
+}

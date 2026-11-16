@@ -6,7 +6,8 @@
  *   npm run dev -w @buchki/api      # in another terminal
  *   npm run smoke:api
  */
-import { CHAINS, WDK, createWdk, parseNetwork, resolveNetwork } from '@buchki/wallet-core'
+import { CHAINS, generateSeedPhrase, parseNetwork, resolveNetwork } from '@buchki/wallet-core'
+import { createWdk } from '@buchki/wallet-core/wdk'
 
 const API = process.env.API_URL || `http://127.0.0.1:${process.env.PORT || 4000}`
 const ORIGIN = process.env.WEB_ORIGIN || 'http://localhost:5173'
@@ -30,7 +31,7 @@ function check (label: string, ok: boolean, detail: unknown = '') {
   if (!ok) process.exitCode = 1
 }
 
-const { wdk } = createWdk(WDK.getRandomSeedPhrase(), profile)
+const { wdk } = await createWdk(generateSeedPhrase(), profile)
 try {
   const addresses: Record<string, string> = {}
   for (const chain of CHAINS) addresses[chain] = await (await wdk.getAccount(chain, 0)).getAddress()

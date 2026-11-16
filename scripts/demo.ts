@@ -5,15 +5,9 @@
  *   npm run demo                  # NETWORK from .env, default testnet
  *   NETWORK=mainnet npm run demo
  */
-import {
-  CHAINS,
-  WDK,
-  createReadOnlyAccount,
-  createWdk,
-  formatUnits,
-  parseNetwork,
-  resolveNetwork
-} from '@buchki/wallet-core'
+import { CHAINS, formatUnits, generateSeedPhrase, parseNetwork, resolveNetwork } from '@buchki/wallet-core'
+import { createWdk } from '@buchki/wallet-core/wdk'
+import { createReadOnlyAccount } from '@buchki/wallet-core/read-only'
 
 const env = process.env
 const profile = resolveNetwork(parseNetwork(env.NETWORK), {
@@ -25,7 +19,7 @@ const profile = resolveNetwork(parseNetwork(env.NETWORK), {
 console.log(`Network: ${profile.name}`)
 
 // Throwaway seed, never printed.
-const { wdk, wallets } = createWdk(WDK.getRandomSeedPhrase(), profile)
+const { wdk, wallets } = await createWdk(generateSeedPhrase(), profile)
 console.log(`Wallets: ${wallets.join(', ')}\n`)
 
 let failures = 0

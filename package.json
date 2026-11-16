@@ -14,7 +14,10 @@
     "demo": "node --env-file-if-exists=.env scripts/demo.ts",
     "smoke:api": "node --env-file-if-exists=.env scripts/api-smoke.ts",
     "test": "npm test --workspaces --if-present",
-    "typecheck": "tsc -b packages/wallet-core scripts apps/api"
+    "typecheck": "tsc -b packages/wallet-core scripts apps/api && tsc -p apps/web",
+    "e2e": "npm run e2e -w @buchki/web",
+    "dev:api": "npm run dev -w @buchki/api",
+    "dev:web": "npm run dev -w @buchki/web"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

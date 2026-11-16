@@ -1,4 +1,5 @@
-import { createReadOnlyAccount, type ChainKey, type NetworkProfile } from '@buchki/wallet-core'
+import type { ChainKey, NetworkProfile } from '@buchki/wallet-core'
+import { createReadOnlyAccount } from '@buchki/wallet-core/read-only'
 import { WdkIndexerClient, isApiError } from '@tetherto/wdk-indexer-http'
 
 const CACHE_TTL_MS = 20_000

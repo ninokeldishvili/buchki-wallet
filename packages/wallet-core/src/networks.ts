@@ -21,12 +21,16 @@ export interface NetworkProfile {
   }
   spark: { network: 'MAINNET' | 'REGTEST' }
   native: Record<ChainKey, NativeAsset>
+  /** Human-readable network name per chain, for confirmation screens. */
+  networkNames: Record<ChainKey, string>
   /** DeFi protocols are mainnet-only (Velora, USD₮0, Aave, Morpho), so they're off on testnet. */
   features: { swap: boolean, bridge: boolean, lending: boolean }
   /** Name of the env var holding the WDK Indexer API key for this network. */
   indexerApiKeyEnv: 'TEST_WDK_API_KEY' | 'LIVE_WDK_API_KEY'
   /** Tokens tracked through the WDK Indexer API (balances + history). */
   indexerTokens: IndexerToken[]
+  /** Block explorer URL templates; `{tx}` and `{address}` are replaced. */
+  explorers: Record<ChainKey, { tx: string, address: string }>
 }
 
 export interface IndexerToken {
@@ -50,6 +54,7 @@ export const NETWORKS: Record<NetworkName, NetworkProfile> = {
       electrum: { host: 'electrum.blockstream.info', port: 60002, protocol: 'ssl' }
     },
     spark: { network: 'REGTEST' },
+    networkNames: { ethereum: 'Ethereum Sepolia', solana: 'Solana Devnet', bitcoin: 'Bitcoin Testnet', spark: 'Spark Regtest' },
     native: {
       ethereum: { symbol: 'SepoliaETH', decimals: 18 },
       solana: { symbol: 'SOL (devnet)', decimals: 9 },
@@ -60,7 +65,13 @@ export const NETWORKS: Record<NetworkName, NetworkProfile> = {
     indexerApiKeyEnv: 'TEST_WDK_API_KEY',
     indexerTokens: [
       { chain: 'ethereum', indexerChain: 'sepolia', token: 'usdt', symbol: 'USD₮' }
-    ]
+    ],
+    explorers: {
+      ethereum: { tx: 'https://sepolia.etherscan.io/tx/{tx}', address: 'https://sepolia.etherscan.io/address/{address}' },
+      solana: { tx: 'https://explorer.solana.com/tx/{tx}?cluster=devnet', address: 'https://explorer.solana.com/address/{address}?cluster=devnet' },
+      bitcoin: { tx: 'https://mempool.space/testnet/tx/{tx}', address: 'https://mempool.space/testnet/address/{address}' },
+      spark: { tx: 'https://www.sparkscan.io/tx/{tx}?network=regtest', address: 'https://www.sparkscan.io/address/{address}?network=regtest' }
+    }
   },
   mainnet: {
     name: 'mainnet',
@@ -72,6 +83,7 @@ export const NETWORKS: Record<NetworkName, NetworkProfile> = {
       electrum: { host: 'electrum.blockstream.info', port: 50002, protocol: 'ssl' }
     },
     spark: { network: 'MAINNET' },
+    networkNames: { ethereum: 'Ethereum', solana: 'Solana', bitcoin: 'Bitcoin', spark: 'Spark' },
     native: {
       ethereum: { symbol: 'ETH', decimals: 18 },
       solana: { symbol: 'SOL', decimals: 9 },
@@ -83,7 +95,13 @@ export const NETWORKS: Record<NetworkName, NetworkProfile> = {
     indexerTokens: [
       { chain: 'ethereum', indexerChain: 'ethereum', token: 'usdt', symbol: 'USD₮' },
       { chain: 'ethereum', indexerChain: 'ethereum', token: 'xaut', symbol: 'XAU₮' }
-    ]
+    ],
+    explorers: {
+      ethereum: { tx: 'https://etherscan.io/tx/{tx}', address: 'https://etherscan.io/address/{address}' },
+      solana: { tx: 'https://explorer.solana.com/tx/{tx}', address: 'https://explorer.solana.com/address/{address}' },
+      bitcoin: { tx: 'https://mempool.space/tx/{tx}', address: 'https://mempool.space/address/{address}' },
+      spark: { tx: 'https://www.sparkscan.io/tx/{tx}', address: 'https://www.sparkscan.io/address/{address}' }
+    }
   }
 }
 
@@ -111,10 +129,22 @@ export function resolveNetwork (name: NetworkName, overrides: EndpointOverrides 
   }
 }
 
-/** Bitcoin client list: Blockbook over HTTPS first (Electrum ports are often firewalled), Electrum SSL as fallback. */
-export function bitcoinClients (profile: NetworkProfile) {
-  return [
-    { type: 'blockbook-http' as const, clientConfig: { url: profile.bitcoin.blockbookUrl } },
-    { type: 'electrum' as const, clientConfig: profile.bitcoin.electrum }
-  ]
+export type Runtime = 'node' | 'browser'
+
+/**
+ * Bitcoin client list: Blockbook over HTTPS first (Electrum ports are often firewalled).
+ * Node also gets Electrum SSL as a fallback; browsers can't open raw TLS sockets, so they use Blockbook only.
+ */
+export function bitcoinClients (profile: NetworkProfile, runtime: Runtime = 'node') {
+  const blockbook = { type: 'blockbook-http' as const, clientConfig: { url: profile.bitcoin.blockbookUrl } }
+  if (runtime === 'browser') return [blockbook]
+  return [blockbook, { type: 'electrum' as const, clientConfig: profile.bitcoin.electrum }]
+}
+
+export function explorerTxUrl (profile: NetworkProfile, chain: ChainKey, txHash: string): string {
+  return profile.explorers[chain].tx.replace('{tx}', encodeURIComponent(txHash))
+}
+
+export function explorerAddressUrl (profile: NetworkProfile, chain: ChainKey, address: string): string {
+  return profile.explorers[chain].address.replace('{address}', encodeURIComponent(address))
 }

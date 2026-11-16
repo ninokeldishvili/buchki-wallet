@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import WalletManagerEvm from '@tetherto/wdk-wallet-evm'
-import { WDK, NETWORKS } from '@buchki/wallet-core'
+import { NETWORKS, generateSeedPhrase } from '@buchki/wallet-core'
 import type { FastifyInstance } from 'fastify'
 import { RpcProxy } from '../src/services/rpc-proxy.ts'
 import { BalanceService } from '../src/services/balances.ts'
@@ -10,7 +10,7 @@ const json = { origin: WEB_ORIGIN, 'content-type': 'application/json' }
 
 /** A real WDK EVM account, signing exactly the way the browser will. */
 async function newWdkAccount () {
-  const wallet = new WalletManagerEvm(WDK.getRandomSeedPhrase(), { provider: NETWORKS.testnet.evm.rpcUrl })
+  const wallet = new WalletManagerEvm(generateSeedPhrase(), { provider: NETWORKS.testnet.evm.rpcUrl })
   const account = await wallet.getAccount(0)
   return { account, address: await account.getAddress(), dispose: () => wallet.dispose() }
 }

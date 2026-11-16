@@ -1,6 +1,6 @@
+// Lightweight entry: no wallet modules. Safe to import anywhere, including the
+// web app's first screen. Heavy parts live in './wdk' and './read-only'.
 export * from './networks.ts'
-export * from './create-wdk.ts'
-export * from './read-only.ts'
 export * from './format.ts'
-export { default as WDK } from '@tetherto/wdk'
 export * from './addresses.ts'
+export * from './seed.ts'
